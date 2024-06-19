@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Personas</title>
+    <script src="js/script.js" defer></script>
+</head>
+<body>
+    <h1>Formulario de Personas</h1>
+    <form id="personaForm">
+        <input type="hidden" id="id" name="id">
+        
+        <div>
+            <label for="doce_nombre">Nombre:</label>
+            <input type="text" id="doce_nombre" name="doce_nombre" required>
+        </div>
+        
+        <div>
+            <label for="doce_apellido">Apellido:</label>
+            <input type="text" id="doce_apellido" name="doce_apellido" required>
+        </div>
+        
+        <div>
+            <label for="per_cumple">Fecha de Nacimiento:</label>
+            <input type="date" id="per_cumple" name="per_cumple" required>
+        </div>
+        
+        <div>
+            <label for="per_mail">Correo Electrónico:</label>
+            <input type="email" id="per_mail" name="per_mail" required>
+        </div>
+        
+        <div>
+            <label for="doce_cel">Celular:</label>
+            <input type="text" id="doce_cel" name="doce_cel" required>
+        </div>
+        
+        <div>
+            <button type="submit">Enviar</button>
+        </div>
+    </form>
+
+    <div id="resultado"></div>
+</body>
+</html>
