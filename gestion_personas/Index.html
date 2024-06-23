@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion de Personas</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Gestion de Personas</h1>
+    <form id="personaForm">
+        <input type="hidden" id="id" name="id">
+        <label for="doce_nombre">Nombre:</label>
+        <input type="text" id="doce_nombre" name="doce_nombre" required>
+        <label for="doce_apellido">Apellido:</label>
+        <input type="text" id="doce_apellido" name="doce_apellido" required>
+        <label for="per_cumple">Cumpleaños:</label>
+        <input type="date" id="per_cumple" name="per_cumple" required>
+        <label for="per_mail">Email:</label>
+        <input type="email" id="per_mail" name="per_mail" required>
+        <label for="doce_cel">Celular:</label>
+        <input type="text" id="doce_cel" name="doce_cel" required>
+        <button type="submit">Guardar</button>
+    </form>
+
+    <h2>Personas</h2>
+    <table id="personasTable" border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Cumpleaños</th>
+                <th>Email</th>
+                <th>Celular</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+//esta funcion realiza una solicitud AJAX GET al read php para traer todo
+        function loadPersonas() {
+            $.ajax({
+                url: 'read.php',
+                type: 'GET',
+                success: function(data) {
+                    let personas = JSON.parse(data);
+                    let tableRows = '';
+//itera sobre los datos devueltos y construye filas de tabla
+                    personas.forEach(persona => {
+                        tableRows += `<tr>
+                            <td>${persona.id}</td>
+                            <td>${persona.doce_nombre}</td>
+                            <td>${persona.doce_apellido}</td>
+                            <td>${persona.per_cumple}</td>
+                            <td>${persona.per_mail}</td>
+                            <td>${persona.doce_cel}</td>
+                            <td>
+                                <button onclick="editPersona(${persona.id})">Editar</button>
+                                <button onclick="deletePersona(${persona.id})">Eliminar</button>
+                            </td>
+                        </tr>`;
+                    });
+                    $('#personasTable tbody').html(tableRows);
+                }
+            });
+        }
+//otra solicitud tipo AJAX GET al read php pero para una persona por su ID
+        function editPersona(id) {
+    $.ajax({
+        url: 'read.php?id=' + id,
+        type: 'GET',
+        success: function(data) {
+            let persona = JSON.parse(data);
+            $('#id').val(persona.id); // Llena el campo oculto con el ID
+            $('#doce_nombre').val(persona.doce_nombre);
+            $('#doce_apellido').val(persona.doce_apellido);
+            $('#per_cumple').val(persona.per_cumple);
+            $('#per_mail').val(persona.per_mail);
+            $('#doce_cel').val(persona.doce_cel);
+        },
+//Informa si hay un error a la hora de la solicitud de editar una persona
+        error: function(xhr, status, error) {
+            console.error("Error en la solicitud AJAX:", status, error);
+            alert("Hubo un error al cargar los datos para editar.");
+        }
+    });
+}
+
+
+//hace una solicitud AJAX POST al delete php para borrar la persona con el id
+function deletePersona(id) {
+    $.ajax({
+        url: 'delete.php',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ id: id }),
+        success: function(data) {
+            let response = JSON.parse(data);
+            //alert(response.mensaje);
+            loadPersonas(); // con esto recargamos dsp de borrar
+        },
+//Informa si hubo otro error tipo AJAX en la solicitud de borrar
+        error: function(xhr, status, error) {
+            console.error("Error en la solicitud AJAX:", status, error);
+            alert("Hubo un error al procesar la solicitud de borrar.");
+        }
+    });
+}
+//esto captura el evento de envio del formulario para crear o actualizar una persona
+        $('#personaForm').on('submit', function(e) {
+//previene el comportamiento por defecto del formulario
+            e.preventDefault();
+            let id = $('#id').val();
+            let url = id ? 'update.php' : 'create.php';
+//recolecta los datos del formulario en un objeto JSON
+            let personaData = {
+                doce_nombre: $('#doce_nombre').val(),
+                doce_apellido: $('#doce_apellido').val(),
+                per_cumple: $('#per_cumple').val(),
+                per_mail: $('#per_mail').val(),
+                doce_cel: $('#doce_cel').val()
+            };
+
+            if (id) {
+                personaData.id = id;
+            }
+//Realiza una solicitud AJAX POST al create php o al update php con los datos de personaData
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(personaData),
+                success: function(data) {
+                    let response = JSON.parse(data);
+                   // alert(response.mensaje); <-- esto era una alerta para mi depuracion jiji
+                    $('#personaForm')[0].reset();
+                    loadPersonas();
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error en la solicitud AJAX:", status, error);
+                    alert("Hubo un error al procesar la solicitud.");
+                }
+            });
+        });
+//carga la lista de personas al cargar la pagina
+        $(document).ready(function() {
+            loadPersonas();
+        });
+    </script>
+</body>
+</html>
