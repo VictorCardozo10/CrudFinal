@@ -2,14 +2,14 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Gestion de Personas</title>
+    <title>Gestión de Personas</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 </head>
 <body>
     <div class="formSuperior">
-        <h2>Gestion de Personas</h2>
+        <h2>Gestión de Personas</h2>
         <form id="personaForm">
             <input type="hidden" id="id" name="id">
             <div class="row">
@@ -40,13 +40,12 @@
                     </div>
                 </div>
             </div>
-                <div class="col">
-                    <div class="form-group">
-                        <label for="per_mail">Email:</label>
-                        <input type="email" class="form-control" id="per_mail" name="per_mail" required>
-                        </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="per_mail">Email:</label>
+                    <input type="email" class="form-control" id="per_mail" name="per_mail" required>
                 </div>
-            
+            </div>
             <button type="submit" class="btn btn-primary boton">Guardar</button>
         </form>
     </div>
@@ -69,7 +68,7 @@
         </table>
     </div>
     <script>
-//esta funcion realiza una solicitud AJAX GET al read php para traer todo
+// Esta función realiza una solicitud AJAX GET al read.php para traer todas las personas
         function loadPersonas() {
             $.ajax({
                 url: 'read.php',
@@ -77,7 +76,7 @@
                 success: function(data) {
                     let personas = JSON.parse(data);
                     let tableRows = '';
-//itera sobre los datos devueltos y construye filas de tabla
+// Itera sobre los datos devueltos y construye filas de tabla
                     personas.forEach(persona => {
                         tableRows += `<tr>
                             <td>${persona.id}</td>
@@ -96,55 +95,55 @@
                 }
             });
         }
-//otra solicitud tipo AJAX GET al read php pero para una persona por su ID
+// Esta función realiza una solicitud AJAX GET al read.php pero para una persona por su ID
         function editPersona(id) {
-    $.ajax({
-        url: 'read.php?id=' + id,
-        type: 'GET',
-        success: function(data) {
-            let persona = JSON.parse(data);
-            $('#id').val(persona.id); // Llena el campo oculto con el ID
-            $('#doce_nombre').val(persona.doce_nombre);
-            $('#doce_apellido').val(persona.doce_apellido);
-            $('#per_cumple').val(persona.per_cumple);
-            $('#per_mail').val(persona.per_mail);
-            $('#doce_cel').val(persona.doce_cel);
-        },
-//Informa si hay un error a la hora de la solicitud de editar una persona
-        error: function(xhr, status, error) {
-            console.error("Error en la solicitud AJAX:", status, error);
-            alert("Hubo un error al cargar los datos para editar.");
+            $.ajax({
+                url: 'read.php?id=' + id,
+                type: 'GET',
+                success: function(data) {
+                    let persona = JSON.parse(data);
+                    $('#id').val(persona.id); // Llena el campo oculto con el ID
+                    $('#doce_nombre').val(persona.doce_nombre);
+                    $('#doce_apellido').val(persona.doce_apellido);
+                    $('#per_cumple').val(persona.per_cumple);
+                    $('#per_mail').val(persona.per_mail);
+                    $('#doce_cel').val(persona.doce_cel);
+                },
+// Informa si hay un error a la hora de la solicitud de editar una persona
+                error: function(xhr, status, error) {
+                    console.error("Error en la solicitud AJAX:", status, error);
+                    alert("Hubo un error al cargar los datos para editar.");
+                }
+            });
         }
-    });
-}
 
-
-//hace una solicitud AJAX POST al delete php para borrar la persona con el id
-function deletePersona(id) {
-    $.ajax({
-        url: 'delete.php',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ id: id }),
-        success: function(data) {
-            let response = JSON.parse(data);
-            //alert(response.mensaje);
-            loadPersonas(); // con esto recargamos dsp de borrar
-        },
-//Informa si hubo otro error tipo AJAX en la solicitud de borrar
-        error: function(xhr, status, error) {
-            console.error("Error en la solicitud AJAX:", status, error);
-            alert("Hubo un error al procesar la solicitud de borrar.");
+// Hace una solicitud AJAX POST al delete.php para borrar la persona con el id
+        function deletePersona(id) {
+            $.ajax({
+                url: 'delete.php',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ id: id }),
+                success: function(data) {
+                    let response = JSON.parse(data);
+                    //alert(response.mensaje);
+                    loadPersonas(); // Con esto recargamos después de borrar
+                },
+// Informa si hubo otro error tipo AJAX en la solicitud de borrar
+                error: function(xhr, status, error) {
+                    console.error("Error en la solicitud AJAX:", status, error);
+                    alert("Hubo un error al procesar la solicitud de borrar.");
+                }
+            });
         }
-    });
-}
-//esto captura el evento de envio del formulario para crear o actualizar una persona
+
+// Captura el evento de envío del formulario para crear o actualizar una persona
         $('#personaForm').on('submit', function(e) {
-//previene el comportamiento por defecto del formulario
+// Previene el comportamiento por defecto del formulario
             e.preventDefault();
             let id = $('#id').val();
             let url = id ? 'update.php' : 'create.php';
-//recolecta los datos del formulario en un objeto JSON
+// Recolecta los datos del formulario en un objeto JSON
             let personaData = {
                 doce_nombre: $('#doce_nombre').val(),
                 doce_apellido: $('#doce_apellido').val(),
@@ -156,7 +155,7 @@ function deletePersona(id) {
             if (id) {
                 personaData.id = id;
             }
-//Realiza una solicitud AJAX POST al create php o al update php con los datos de personaData
+// Realiza una solicitud AJAX POST al create.php o al update.php con los datos de personaData
             $.ajax({
                 url: url,
                 type: 'POST',
@@ -164,9 +163,10 @@ function deletePersona(id) {
                 data: JSON.stringify(personaData),
                 success: function(data) {
                     let response = JSON.parse(data);
-                   // alert(response.mensaje); <-- esto era una alerta para mi depuracion jiji
-                    $('#personaForm')[0].reset();
-                    loadPersonas();
+                    //alert(response.mensaje); <-- Esto era una alerta para mi depuración jiji
+                    $('#personaForm')[0].reset(); // Limpia el formulario
+                    $('#id').val(''); // Resetea el campo oculto ID
+                    loadPersonas(); // Recarga la lista de personas
                 },
                 error: function(xhr, status, error) {
                     console.error("Error en la solicitud AJAX:", status, error);
@@ -174,7 +174,7 @@ function deletePersona(id) {
                 }
             });
         });
-//carga la lista de personas al cargar la pagina
+// Carga la lista de personas al cargar la página
         $(document).ready(function() {
             loadPersonas();
         });
