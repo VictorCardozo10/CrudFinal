@@ -1,5 +1,5 @@
 Integrantes:
-Misael Amarilla
+Misael Amarilla<br>
 Víctor Cardozo
 Matías Orzusa
 José Rojas
