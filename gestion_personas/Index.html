@@ -40,15 +40,24 @@
                     </div>
                 </div>
             </div>
-                <div class="col">
-                    <div class="form-group">
-                        <label for="per_mail">Email:</label>
-                        <input type="email" class="form-control" id="per_mail" name="per_mail" required>
-                        </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="per_mail">Email:</label>
+                    <input type="email" class="form-control" id="per_mail" name="per_mail" required>
                 </div>
-            
+            </div>
             <button type="submit" class="btn btn-primary boton">Guardar</button>
         </form>
+
+        <!-- Nuevo campo de búsqueda y botón de cargar todos -->
+        <div class="form-group mt-3">
+            <label for="searchId">Buscar por ID:</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="searchId" name="searchId">
+                <button type="button" class="btn btn-primary" onclick="buscarPersona()">Buscar</button>
+                <button type="button" class="btn btn-secondary" onclick="loadPersonas()">Cargar Todos</button>
+            </div>
+        </div>
     </div>
     <div class="formSuperior">
         <h2>Personas</h2>
@@ -174,7 +183,41 @@ function deletePersona(id) {
                 }
             });
         });
-//carga la lista de personas al cargar la pagina
+
+// Nueva función para buscar persona por ID
+function buscarPersona() {
+    let id = $('#searchId').val();
+    if (id) {
+        $.ajax({
+            url: 'read.php?id=' + id,
+            type: 'GET',
+            success: function(data) {
+                let persona = JSON.parse(data);
+                let tableRows = `<tr>
+                    <td>${persona.id}</td>
+                    <td>${persona.doce_nombre}</td>
+                    <td>${persona.doce_apellido}</td>
+                    <td>${persona.per_cumple}</td>
+                    <td>${persona.per_mail}</td>
+                    <td>${persona.doce_cel}</td>
+                    <td>
+                        <button onclick="editPersona(${persona.id})" class="btn btn-warning">Editar</button>
+                        <button onclick="deletePersona(${persona.id})" class="btn btn-danger">Eliminar</button>
+                    </td>
+                </tr>`;
+                $('#personasTable tbody').html(tableRows);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error en la solicitud AJAX:", status, error);
+                alert("Hubo un error al buscar la persona.");
+            }
+        });
+    } else {
+        alert("Por favor ingresa un ID para buscar.");
+    }
+}
+
+//carga la lista de personas cuando se carga la pagina 
         $(document).ready(function() {
             loadPersonas();
         });
